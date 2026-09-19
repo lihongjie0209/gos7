@@ -27,15 +27,26 @@ type S7BlocksList struct {
 
 // implement list block
 func (mb *client) PGListBlocks() (list S7BlocksList, err error) {
-	list.OBList, err = mb.pgBlockList(blockOB)
-	list.DBList, err = mb.pgBlockList(blockDB)
-	list.FCList, err = mb.pgBlockList(blockFC)
-	list.OBList, err = mb.pgBlockList(blockOB)
-	list.FBList, err = mb.pgBlockList(blockFB)
-	list.SDBList, err = mb.pgBlockList(blockSDB)
-	list.SFBList, err = mb.pgBlockList(blockSFB)
+	if list.OBList, err = mb.pgBlockList(blockOB); err != nil {
+		return list, err
+	}
+	if list.DBList, err = mb.pgBlockList(blockDB); err != nil {
+		return list, err
+	}
+	if list.FCList, err = mb.pgBlockList(blockFC); err != nil {
+		return list, err
+	}
+	if list.FBList, err = mb.pgBlockList(blockFB); err != nil {
+		return list, err
+	}
+	if list.SDBList, err = mb.pgBlockList(blockSDB); err != nil {
+		return list, err
+	}
+	if list.SFBList, err = mb.pgBlockList(blockSFB); err != nil {
+		return list, err
+	}
 	list.SFCList, err = mb.pgBlockList(blockSFC)
-	return
+	return list, err
 }
 
 func (mb *client) pgBlockList(blockType byte) (arr []int, err error) {
