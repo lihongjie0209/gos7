@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-//S7DataItem which expose as S7DataItem to use in Multiple read/write
+// S7DataItem which expose as S7DataItem to use in Multiple read/write
 type S7DataItem struct {
 	Area     int
 	WordLen  int
@@ -20,7 +20,7 @@ type S7DataItem struct {
 	Error    string
 }
 
-//implement WriteMulti
+// implement WriteMulti
 func (mb *client) AGWriteMulti(dataItems []S7DataItem, itemsCount int) (err error) {
 	// Checks items
 	if itemsCount > 20 { //max variable is 20
@@ -110,8 +110,6 @@ func (mb *client) AGWriteMulti(dataItems []S7DataItem, itemsCount int) (err erro
 	binary.BigEndian.PutUint16(s7Multi[2:], uint16(offset))      // Whole size
 	binary.BigEndian.PutUint16(s7Multi[15:], uint16(dataLength)) // Whole size
 	request := NewProtocolDataUnit(s7Multi)
-	//debug
-	fmt.Printf("%d", s7Multi)
 	//send
 	response, err := mb.send(&request)
 	if err == nil {
@@ -137,7 +135,7 @@ func (mb *client) AGWriteMulti(dataItems []S7DataItem, itemsCount int) (err erro
 	return
 }
 
-//implement ReadMulti
+// implement ReadMulti
 func (mb *client) AGReadMulti(dataItems []S7DataItem, itemsCount int) (err error) {
 	// Checks items
 	if itemsCount > 20 { //max variable is 20
