@@ -50,6 +50,19 @@ func NewTCPClientHandler(address string, rack int, slot int) *TCPClientHandler {
 	return h
 }
 
+// NewTCPClientHandlerWithTSAP allocates a new TCPClientHandler with explicit
+// local and remote TSAP values. It is useful for PLCs and drives whose ISO-on-
+// TCP connection parameters cannot be represented by rack and slot.
+func NewTCPClientHandlerWithTSAP(address string, localTSAP, remoteTSAP uint16) *TCPClientHandler {
+	h := &TCPClientHandler{}
+	h.Address = address
+	h.Timeout = tcpTimeout
+	h.IdleTimeout = tcpIdleTimeout
+	h.ConnectionType = connectionTypePG
+	h.setConnectionParameters(address, localTSAP, remoteTSAP)
+	return h
+}
+
 // NewTCPClientHandlerWithConnectType allocates a new TCPClientHandler with connection type.
 func NewTCPClientHandlerWithConnectType(address string, rack int, slot int, connectType int) *TCPClientHandler {
 	h := &TCPClientHandler{}

@@ -12,6 +12,16 @@ import (
 	"time"
 )
 
+func TestNewTCPClientHandlerWithTSAP(t *testing.T) {
+	handler := NewTCPClientHandlerWithTSAP("192.0.2.10:1102", 0x1201, 0x3402)
+	if handler.Address != "192.0.2.10:1102" {
+		t.Fatalf("address=%q", handler.Address)
+	}
+	if handler.localTSAPHigh != 0x12 || handler.localTSAPLow != 0x01 || handler.remoteTSAPHigh != 0x34 || handler.remoteTSAPLow != 0x02 {
+		t.Fatalf("local=%02x%02x remote=%02x%02x", handler.localTSAPHigh, handler.localTSAPLow, handler.remoteTSAPHigh, handler.remoteTSAPLow)
+	}
+}
+
 func TestTCPTransporter(t *testing.T) {
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
