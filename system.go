@@ -9,13 +9,13 @@ import (
 	"strings"
 )
 
-//SZLHeader See §33.1 of "System Software for S7-300/400 System and Standard Functions" and see SFC51 description too
+// SZLHeader See §33.1 of "System Software for S7-300/400 System and Standard Functions" and see SFC51 description too
 type SZLHeader struct {
 	LengthHeader       uint16
 	NumberOfDataRecord uint16
 }
 
-//S7SZL constains header and data
+// S7SZL constains header and data
 type S7SZL struct {
 	Header SZLHeader
 	Data   []byte
@@ -29,14 +29,14 @@ type S7SZLList struct {
 
 // S7Protection See §33.19 of "System Software for S7-300/400 System and Standard Functions"
 type S7Protection struct {
-	schSchal uint // sch_schal: Protection level set with the mode selector (1, 2, 3)
-	schPar   uint // sch_par: Protection level set in parameters (0, 1, 2, 3; 0: no password,protection level invalid)
-	schRel   uint // sch_rel: Valid protection level of the CPU
-	bartSch  uint // bart_sch: Mode selector setting (1:RUN, 2:RUN-P, 3:STOP, 4:MRES,0:undefined or cannot be determined)
-	anlSch   uint // anl_sch:Startup switch setting (1:CRST, 2:WRST, 0:undefined, does not exist of cannot be determined)
+	SelectorLevel  uint // Protection level set with the mode selector (1, 2, 3).
+	ParameterLevel uint // Protection level set in parameters (0, 1, 2, 3).
+	EffectiveLevel uint // Effective protection level of the CPU.
+	SelectorMode   uint // Mode selector setting (1:RUN, 2:RUN-P, 3:STOP, 4:MRES).
+	StartupMode    uint // Startup switch setting (1:CRST, 2:WRST).
 }
 
-//S7OrderCode Order Code + Version
+// S7OrderCode Order Code + Version
 type S7OrderCode struct {
 	Code string // such as "6ES7 151-8AB01-0AB0"
 	V1   byte   // Version 1st digit
@@ -44,7 +44,7 @@ type S7OrderCode struct {
 	V3   byte   // Version 3th digit
 }
 
-//S7CpuInfo CPU Info
+// S7CpuInfo CPU Info
 type S7CpuInfo struct {
 	ModuleTypeName string
 	SerialNumber   string
@@ -53,7 +53,7 @@ type S7CpuInfo struct {
 	ModuleName     string
 }
 
-//S7CpInfo cp info
+// S7CpInfo cp info
 type S7CpInfo struct {
 	MaxPduLength   int
 	MaxConnections int
@@ -61,7 +61,7 @@ type S7CpInfo struct {
 	MaxBusRate     int
 }
 
-//implement GetCPUInfo
+// implement GetCPUInfo
 func (mb *client) GetCPUInfo() (info S7CpuInfo, err error) {
 
 	szl, _, err := mb.readSzl(0x001C, 0x000)
@@ -81,7 +81,7 @@ func (mb *client) GetCPUInfo() (info S7CpuInfo, err error) {
 	return
 }
 
-//implement of GetCPInfo
+// implement of GetCPInfo
 func (mb *client) GetCPInfo() (info S7CpInfo, err error) {
 	szl, _, err := mb.readSzl(0x0131, 0x000)
 	if err == nil {
@@ -93,7 +93,7 @@ func (mb *client) GetCPInfo() (info S7CpInfo, err error) {
 	return
 }
 
-//implement of GetOrderCode
+// implement of GetOrderCode
 func (mb *client) GetOrderCode() (info S7OrderCode, err error) {
 	szl, size, err := mb.readSzl(0x0131, 0x000)
 	if err == nil {
@@ -105,7 +105,7 @@ func (mb *client) GetOrderCode() (info S7OrderCode, err error) {
 	return
 }
 
-//internal function readSZL
+// internal function readSZL
 func (mb *client) readSzl(id int, index int) (szl S7SZL, size int, err error) {
 	var dataSZL int
 	offset := 0

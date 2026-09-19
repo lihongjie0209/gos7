@@ -53,11 +53,11 @@ func (mb *client) GetProtection() (protection S7Protection, err error) {
 
 	szl, _, err := mb.readSzl(0x0232, 0x0004)
 	if err == nil {
-		protection.schSchal = uint(binary.BigEndian.Uint16(szl.Data[2:]))
-		protection.schPar = uint(binary.BigEndian.Uint16(szl.Data[4:]))
-		protection.schRel = uint(binary.BigEndian.Uint16(szl.Data[6:]))
-		protection.bartSch = uint(binary.BigEndian.Uint16(szl.Data[8:]))
-		protection.anlSch = uint(binary.BigEndian.Uint16(szl.Data[10:]))
+		protection.SelectorLevel = uint(binary.BigEndian.Uint16(szl.Data[2:]))
+		protection.ParameterLevel = uint(binary.BigEndian.Uint16(szl.Data[4:]))
+		protection.EffectiveLevel = uint(binary.BigEndian.Uint16(szl.Data[6:]))
+		protection.SelectorMode = uint(binary.BigEndian.Uint16(szl.Data[8:]))
+		protection.StartupMode = uint(binary.BigEndian.Uint16(szl.Data[10:]))
 	}
 	return
 }
