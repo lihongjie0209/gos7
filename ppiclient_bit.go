@@ -114,12 +114,12 @@ func DecodePPIWriteBitResponse(response []byte, request PPIBitRequest) error {
 }
 
 // ReadPPIBit exchanges one native bit request on a caller-owned PPI session.
-func ReadPPIBit(wire io.ReadWriter, peer, local, number byte, request PPIBitRequest) (bool, error) {
+func ReadPPIBit(wire io.ReadWriter, local, target byte, request PPIBitRequest) (bool, error) {
 	pdu, err := EncodePPIReadBitPDU(request)
 	if err != nil {
 		return false, err
 	}
-	response, err := ExchangeMPI2S7PDU(wire, peer, local, number, pdu)
+	response, err := ExchangePPI(wire, local, target, pdu)
 	if err != nil {
 		return false, err
 	}
@@ -127,12 +127,12 @@ func ReadPPIBit(wire io.ReadWriter, peer, local, number byte, request PPIBitRequ
 }
 
 // WritePPIBit exchanges one native bit write on a caller-owned PPI session.
-func WritePPIBit(wire io.ReadWriter, peer, local, number byte, request PPIBitRequest, value bool) error {
+func WritePPIBit(wire io.ReadWriter, local, target byte, request PPIBitRequest, value bool) error {
 	pdu, err := EncodePPIWriteBitPDU(request, value)
 	if err != nil {
 		return err
 	}
-	response, err := ExchangeMPI2S7PDU(wire, peer, local, number, pdu)
+	response, err := ExchangePPI(wire, local, target, pdu)
 	if err != nil {
 		return err
 	}

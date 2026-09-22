@@ -107,10 +107,47 @@ func TestPPIBitOperationsRejectBeforeIO(t *testing.T) {
 	request := ppiTestBitRequest()
 	request.Bit = 8
 	wire := &mpi2InitWire{reader: bytes.NewReader(nil)}
-	if value, err := ReadPPIBit(wire, 0x55, 3, 4, request); err == nil || value || wire.writes.Len() != 0 {
+	if value, err := ReadPPIBit(wire, 0, 2, request); err == nil || value || wire.writes.Len() != 0 {
 		t.Fatalf("invalid read caused I/O: value=%v err=%v writes=%x", value, err, wire.writes.Bytes())
 	}
-	if err := WritePPIBit(wire, 0x55, 3, 4, request, true); err == nil || wire.writes.Len() != 0 {
+	if err := WritePPIBit(wire, 0, 2, request, true); err == nil || wire.writes.Len() != 0 {
 		t.Fatalf("invalid write caused I/O: err=%v writes=%x", err, wire.writes.Bytes())
+	}
+}
+
+func TestPPIBitOperationsUsePPIExchange(t *testing.T) {
+	t.Parallel()
+	for _, tt := range []struct {
+		name     string
+		response []byte
+		write    bool
+	}{
+		{name: "read", response: ppiTestBitReadResponse(1)},
+		{name: "write", response: mpi2TestWriteResponse(), write: true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			response, err := EncodePPIFrame(PPIFrame{
+				Kind: PPIVariable, Destination: 0, Source: 2, Control: 0x08, Payload: tt.response,
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+			wire := &ppiTestWire{reads: bytes.NewReader(append([]byte{byte(PPIAck)}, response...)), limit: 1}
+			if tt.write {
+				err = WritePPIBit(wire, 0, 2, ppiTestBitRequest(), true)
+			} else {
+				var value bool
+				value, err = ReadPPIBit(wire, 0, 2, ppiTestBitRequest())
+				if !value {
+					t.Fatal("read returned false")
+				}
+			}
+			if err != nil {
+				t.Fatal(err)
+			}
+			if wire.writes.Bytes()[0] != byte(PPIVariable) {
+				t.Fatalf("request did not use PPI framing: %x", wire.writes.Bytes())
+			}
+		})
 	}
 }
