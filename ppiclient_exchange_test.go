@@ -63,7 +63,6 @@ func TestPPIExchangeRejectsInvalidResponses(t *testing.T) {
 		{"truncated", []byte{0xe5, 0x68, 4}},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
 			wire := &ppiTestWire{reads: bytes.NewReader(tt.data), limit: 1}
 			if _, err := ExchangePPI(wire, 0, 2, []byte{0x32}); err == nil {
 				t.Fatalf("accepted invalid exchange %x", tt.data)
@@ -86,7 +85,6 @@ func TestPPIExchangeRejectsInvalidRequestAndShortWrite(t *testing.T) {
 		{"short write", 0, 2, []byte{0x32}, true},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
 			wire := &ppiTestWire{reads: bytes.NewReader([]byte{0xe5}), short: tt.short}
 			if _, err := ExchangePPI(wire, tt.local, tt.target, tt.payload); err == nil {
 				t.Fatal("accepted invalid request or short write")

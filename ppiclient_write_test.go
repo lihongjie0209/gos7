@@ -42,7 +42,6 @@ func TestPPIWritePDUAddressBoundary(t *testing.T) {
 		{"zero reference", func(r *PPIWriteRequest) { r.Reference = 0 }},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
 			request := valid
 			tt.edit(&request)
 			if _, err := EncodePPIWritePDU(request); err == nil {

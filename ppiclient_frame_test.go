@@ -17,7 +17,6 @@ func TestPPIFrameRoundTrip(t *testing.T) {
 		{"variable", PPIFrame{Kind: PPIVariable, Destination: 2, Source: 0, Control: 0x6c, Payload: []byte{0x32, 0x01}}, []byte{0x68, 5, 5, 0x68, 2, 0, 0x6c, 0x32, 0x01, 0xa1, 0x16}},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
 			wire, err := EncodePPIFrame(tt.frame)
 			if err != nil || !bytes.Equal(wire, tt.wire) {
 				t.Fatalf("wire=%x error=%v want=%x", wire, err, tt.wire)
@@ -79,7 +78,6 @@ func TestPPIFrameRejectsMalformed(t *testing.T) {
 		{"destination", []byte{0x10, 127, 0, 0x5c, 0xdb, 0x16}},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
 			if _, err := DecodePPIFrame(tt.wire); err == nil {
 				t.Fatalf("accepted malformed frame %x", tt.wire)
 			}
