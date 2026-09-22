@@ -1,3 +1,5 @@
+//go:build integration
+
 package test
 
 // Copyright 2018 Trung Hieu Le. All rights reserved.
